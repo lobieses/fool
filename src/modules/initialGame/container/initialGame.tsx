@@ -2,11 +2,11 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import { finishNamesSelecting } from '../../../redux/initialReducer/initialReducerActions';
+import { Formik } from 'formik';
+import { selectingNamesValidator } from '../utils/selectingNamesValidator';
 
 export const InitialGame = () => {
   const dispatch = useDispatch();
-  const [firstName, setFirstName] = React.useState('');
-  const [secondName, setSecondName] = React.useState('');
 
   const finishNamesSelectingFN = (firstName: string, secondName: string) => {
     dispatch(finishNamesSelecting({ firstName, secondName }));
@@ -15,27 +15,53 @@ export const InitialGame = () => {
   return (
     <Container>
       <SelectNamesContainer>
-        <SelectNameBlock>
-          <SelectNameLabel>First User</SelectNameLabel>
-          <SelectNameInput
-            value={firstName}
-            onChange={e => setFirstName(e.target.value)}
-          />
-        </SelectNameBlock>
-        <SelectNameBlock>
-          <SelectNameLabel>Second User</SelectNameLabel>
-          <SelectNameInput
-            value={secondName}
-            onChange={e => setSecondName(e.target.value)}
-          />
-        </SelectNameBlock>
-        <ApplyNamesButton
-          onClick={() => {
-            finishNamesSelectingFN(firstName, secondName);
+        <Formik
+          initialValues={{ firstName: '', secondName: '' }}
+          onSubmit={values => {
+            finishNamesSelectingFN(values.firstName, values.secondName);
+          }}
+          validate={values => {
+            const errors = selectingNamesValidator(values);
+            return errors;
           }}
         >
-          Apply Names
-        </ApplyNamesButton>
+          {({
+            values,
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            errors,
+            touched,
+          }) => (
+            <form onSubmit={handleSubmit}>
+              <SelectNameBlock>
+                <SelectNameLabel>First User</SelectNameLabel>
+                <SelectNameInput
+                  name="firstName"
+                  value={values.firstName}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                />
+                {errors.firstName && touched.firstName && (
+                  <SelectNameError>{errors.firstName}</SelectNameError>
+                )}
+              </SelectNameBlock>
+              <SelectNameBlock>
+                <SelectNameLabel>Second User</SelectNameLabel>
+                <SelectNameInput
+                  name="secondName"
+                  value={values.secondName}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                />
+                {errors.secondName && touched.secondName && (
+                  <SelectNameError>{errors.secondName}</SelectNameError>
+                )}
+              </SelectNameBlock>
+              <ApplyNamesButton type="submit">Apply Names</ApplyNamesButton>
+            </form>
+          )}
+        </Formik>
       </SelectNamesContainer>
     </Container>
   );
@@ -59,6 +85,10 @@ const SelectNamesContainer = styled.div`
 const SelectNameBlock = styled.div``;
 
 const SelectNameLabel = styled.div`
+  color: red;
+`;
+
+const SelectNameError = styled.div`
   color: red;
 `;
 
