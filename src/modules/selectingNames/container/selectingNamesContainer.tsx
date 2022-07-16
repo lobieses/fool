@@ -1,15 +1,17 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
-import { finishNamesSelecting } from '../../../redux/initialReducer/initialReducerActions';
 import { Formik } from 'formik';
 import { selectingNamesValidator } from '../utils/selectingNamesValidator';
+import { setNames } from '../../../redux/gameSessionReducer/gameSessionReducerAction';
+import { finishNamesSelecting } from '../../../redux/initialReducer/initialReducerActions';
 
-export const InitialGame = () => {
+export const SelectingNames = () => {
   const dispatch = useDispatch();
 
   const finishNamesSelectingFN = (firstName: string, secondName: string) => {
-    dispatch(finishNamesSelecting({ firstName, secondName }));
+    dispatch(setNames({ firstName, secondName }));
+    dispatch(finishNamesSelecting());
   };
 
   return (

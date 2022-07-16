@@ -1,10 +1,11 @@
 import React from 'react';
 import './App.css';
-import { InitialGame } from './modules/initialGame/container/initialGame';
+import { SelectingNames } from './modules/selectingNames/container/selectingNamesContainer';
 import { Provider } from 'react-redux';
 import store from './redux/store';
 import { useSelector } from 'react-redux';
-import { isInitGame } from './redux/initialReducer/initialReducer';
+import { hasUsernames } from './redux/initialReducer/initialReducer';
+import { GameFieldContainer } from './modules/gameField/container/gameFieldContainer';
 
 function App() {
   return (
@@ -15,9 +16,9 @@ function App() {
 }
 
 const Router = () => {
-  const isInitialGame = useSelector(isInitGame);
+  const needToSelectName = useSelector(hasUsernames);
 
-  return <>{isInitialGame ? <InitialGame /> : <div></div>}</>;
+  return <>{needToSelectName ? <GameFieldContainer /> : <SelectingNames />}</>;
 };
 
 export default App;

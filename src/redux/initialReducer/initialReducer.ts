@@ -5,15 +5,11 @@ import { GlobalStateType } from '../store';
 import { FINISH_NAMES_SELECTING } from './initialReducerActions';
 
 type initialGameStateTypes = {
-  isInitGame: boolean;
-  firstName: string | null;
-  secondName: string | null;
+  hasUsernames: boolean;
 };
 
 let initialGameState: initialGameStateTypes = {
-  isInitGame: true,
-  firstName: null,
-  secondName: null,
+  hasUsernames: true,
 };
 
 const STATE_KEY = 'initialGameReducer';
@@ -24,13 +20,8 @@ const initialGameReducer = (
 ): initialGameStateTypes => {
   switch (action.type) {
     case FINISH_NAMES_SELECTING: {
-      const { firstName, secondName } = action.payload;
       //@ts-expect-error
-      return R.compose(
-        R.assocPath(['firstName'], firstName),
-        R.assocPath(['secondName'], secondName),
-        R.assocPath(['isInitGame'], false),
-      )(state);
+      return R.compose(R.assocPath(['hasUsernames'], true))(state);
     }
     default:
       return state;
@@ -39,8 +30,11 @@ const initialGameReducer = (
 
 export const getState = (state: GlobalStateType) => state[STATE_KEY];
 
-export const isInitGame: Selector<boolean> = createSelector(getState, state => {
-  return state.isInitGame;
-});
+export const hasUsernames: Selector<boolean> = createSelector(
+  getState,
+  state => {
+    return state.hasUsernames;
+  },
+);
 
 export default initialGameReducer;
