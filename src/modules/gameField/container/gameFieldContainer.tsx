@@ -1,32 +1,41 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
-import {
-  getFirstUser,
-  usersIsReady,
-} from '../../../redux/gameSessionReducer/gameSessionReducer';
+import { usersIsReady } from '../../../redux/gameSessionReducer/gameSessionReducer';
 import { startGame } from '../../../redux/gameSessionReducer/gameSessionReducerAction';
-import { Card } from '../components/Card';
+import { GameField } from '../components/GameField';
+import { OpponentCards } from '../components/OpponentsCards';
+import { Deck } from '../components/Deck';
+import { LightsOut } from '../components/LightsOut';
+import { MyCards } from '../components/MyCards';
 
-export const GameFieldContainer = () => {
+export const Game = () => {
   const dispatch = useDispatch();
   const usersIsReadyForGame = useSelector(usersIsReady);
-  const firstUser = useSelector(getFirstUser);
 
   return (
     <>
       {usersIsReadyForGame ? (
         <Container>
-          <OpponentCards />
-          <Deck />
-          <GameField />
-          <LightsOut />
-          <MyCards>
-            {firstUser.cards &&
-              firstUser.cards.map(card => {
-                return <Card suitOfCard={card.suitOfCard} rank={card.rank} />;
-              })}
-          </MyCards>
+          <OpponentCardsContainer>
+            <OpponentCards />
+          </OpponentCardsContainer>
+
+          <DeckContainer>
+            <Deck />
+          </DeckContainer>
+
+          <GameFieldWrapper>
+            <GameField />
+          </GameFieldWrapper>
+
+          <LightsOutContainer>
+            <LightsOut />
+          </LightsOutContainer>
+
+          <MyCardsContainer>
+            <MyCards />
+          </MyCardsContainer>
         </Container>
       ) : (
         <ReadyButtonContainer>
@@ -63,33 +72,31 @@ const Container = styled.div`
   grid-template-rows: 2fr 3fr 2fr;
 `;
 
-const OpponentCards = styled.div`
+const OpponentCardsContainer = styled.div`
   width: 100%;
   height: 100%;
   grid-column-start: 1;
   grid-column-end: 4;
 `;
 
-const Deck = styled.div`
+const DeckContainer = styled.div`
   width: 100%;
   height: 100%;
 `;
 
-const GameField = styled.div`
+const GameFieldWrapper = styled.div`
   width: 100%;
   height: 100%;
 `;
 
-const LightsOut = styled.div`
+const LightsOutContainer = styled.div`
   width: 100%;
   height: 100%;
 `;
 
-const MyCards = styled.div`
+const MyCardsContainer = styled.div`
   width: 100%;
   height: 100%;
   grid-column-start: 1;
   grid-column-end: 4;
-  display: flex;
-  justify-content: space-around;
 `;

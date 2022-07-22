@@ -1,6 +1,6 @@
 import * as R from 'ramda';
 import { createSelector } from 'reselect';
-import { Action, Selector } from '../models';
+import { Action, RCompose, Selector } from '../models';
 import { GlobalStateType } from '../store';
 import { FINISH_NAMES_SELECTING } from './initialReducerActions';
 
@@ -20,8 +20,9 @@ const initialGameReducer = (
 ): initialGameStateTypes => {
   switch (action.type) {
     case FINISH_NAMES_SELECTING: {
-      //@ts-expect-error
-      return R.compose(R.assocPath(['hasUsernames'], true))(state);
+      return RCompose<initialGameStateTypes>(
+        R.assocPath(['hasUsernames'], true),
+      )(state);
     }
     default:
       return state;
