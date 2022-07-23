@@ -14,20 +14,27 @@ export type Card = {
 };
 
 export type MovedCardInfo = {
-  suitOfCard: string;
-  rank: string;
+  suitOfCard: SuitOfCard;
+  rank: Rank;
   rankForComparison: number;
   userName: string;
 };
 
 export type DeckOfCard = Card[];
 
+export type CardsOnGameField = {
+  suitOfCard: SuitOfCard;
+  rank: Rank;
+  rankForComparison: number;
+  beatOfCard: Card | null;
+}[];
+
 export type initialGameStateTypes = {
   usersIsReady: boolean;
   shuffledDeck: DeckOfCard | null;
   users: { [key: string]: User };
-  trump: string | null;
-  gameField: DeckOfCard | null;
+  trump: SuitOfCard | null;
+  gameField: CardsOnGameField | null;
 };
 
 export const deckOfCard: DeckOfCard = [

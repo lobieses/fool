@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import { getWalkingPlayer } from '../../../redux/gameSessionReducer/gameSessionReducer';
+import { getMovingUser } from '../../../redux/gameSessionReducer/gameSessionReducer';
 import styled from 'styled-components';
 
 export const LightsOut = () => {
-  const walkingUser = useSelector(getWalkingPlayer);
+  const walkingUser = useSelector(getMovingUser);
   return <LightsOutContainer>{walkingUser}</LightsOutContainer>;
 };
 

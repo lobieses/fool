@@ -19,7 +19,6 @@ export const OpponentCards = () => {
               rotate={180}
               userName={secondUser.name || ''}
               key={card.suitOfCard + card.rank}
-              canDrag={secondUser.hisTurn}
             />
           );
         })}
@@ -29,5 +28,6 @@ export const OpponentCards = () => {
 
 const OpponentCardsContainer = styled.div`
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
+  gap: 20px;
 `;

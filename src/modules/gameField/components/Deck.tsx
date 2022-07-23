@@ -14,7 +14,7 @@ export const Deck = () => {
       {lastCard && (
         <>
           <CardCounter>{deck?.length}</CardCounter>
-          <Sdsd marginLeft={70}>
+          <Container marginLeft={70}>
             <Card
               suitOfCard={lastCard.suitOfCard}
               rank={lastCard.rank}
@@ -22,11 +22,11 @@ export const Deck = () => {
               rotate={90}
               canDrag={false}
             />
-          </Sdsd>
+          </Container>
           <CardsContainer>
-            <Sdsd>
+            <Container>
               <InvertedCard />
-            </Sdsd>
+            </Container>
           </CardsContainer>
         </>
       )}
@@ -39,11 +39,13 @@ const DeckContainer = styled.div`
 `;
 
 const CardCounter = styled.div`
+  position: absolute;
+  top: -25px;
   font-size: 20px;
-  color: white;
+  color: #c7c7c7;
 `;
 
-const Sdsd = styled.div<any>`
+const Container = styled.div<any>`
   top: 20%;
   position: absolute;
   transform: rotate(90);

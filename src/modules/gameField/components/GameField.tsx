@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { makeCardMove } from '../../../redux/gameSessionReducer/gameSessionReducerAction';
 import { MovedCardInfo } from '../../../redux/gameSessionReducer/models';
 import { getGameField } from '../../../redux/gameSessionReducer/gameSessionReducer';
+import { movingUser } from '../models/models';
+import { ReceivingCard } from './ReceivingCard';
 import { Card } from './Card';
 
 export const GameField = () => {
@@ -15,27 +17,26 @@ export const GameField = () => {
     (card: MovedCardInfo) => {
       if (
         !gameField ||
-        gameField?.some(cardOnField => cardOnField.rank === card.rank)
+        (gameField.length < 6 &&
+          gameField?.some(
+            cardOnField =>
+              cardOnField.rank === card.rank ||
+              (cardOnField.beatOfCard &&
+                cardOnField.beatOfCard?.rank === card.rank),
+          ))
       ) {
         dispatch(makeCardMove({ ...card }));
       }
     },
-    [gameField],
+    [gameField, dispatch],
   );
-
-  React.useEffect(() => {
-    console.log(gameField);
-  }, [gameField]);
 
   const [, drop] = useDrop(
     () => ({
-      accept: 'Card',
+      accept: movingUser,
       drop: onCardMove,
-      collect: monitor => ({
-        isOver: !!monitor.isOver(),
-      }),
     }),
-    [gameField],
+    [gameField, dispatch],
   );
 
   return (
@@ -43,13 +44,23 @@ export const GameField = () => {
       {gameField &&
         gameField.map(card => {
           return (
-            <Card
+            <ReceivingCard
               suitOfCard={card.suitOfCard}
               rank={card.rank}
               rankForComparison={card.rankForComparison}
               key={card.suitOfCard + card.rank}
-              canDrag={false}
-            />
+              alreadyBeat={!!card.beatOfCard}
+            >
+              {card.beatOfCard && (
+                <Card
+                  suitOfCard={card.beatOfCard.suitOfCard}
+                  rank={card.beatOfCard.rank}
+                  rankForComparison={card.beatOfCard.rankForComparison}
+                  rotate={20}
+                  canDrag={false}
+                />
+              )}
+            </ReceivingCard>
           );
         })}
     </GameFieldContainer>

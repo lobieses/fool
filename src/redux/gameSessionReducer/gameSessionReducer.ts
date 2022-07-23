@@ -3,11 +3,20 @@ import { createSelector } from 'reselect';
 import { Action, RCompose, Selector } from '../models';
 import { GlobalStateType } from '../store';
 import {
+  BEAT_THE_MOVED_CARD,
   MAKE_CARD_MOVE,
   SET_NAMES,
   START_GAME,
+  TAKE_CARDS,
 } from './gameSessionReducerAction';
-import { initialGameStateTypes, deckOfCard, DeckOfCard, User } from './models';
+import {
+  initialGameStateTypes,
+  deckOfCard,
+  DeckOfCard,
+  User,
+  SuitOfCard,
+  CardsOnGameField,
+} from './models';
 import { defineFirstUser, shuffleTheDeck } from './utils';
 
 let initialGameState: initialGameStateTypes = {
@@ -66,14 +75,88 @@ const gameSessionReducer = (
       const indexOfCurrentCard = newUserCards.findIndex(
         card => card.suitOfCard === suitOfCard && card.rank === rank,
       );
+      const newGameFieldCard = {
+        ...newUserCards.splice(indexOfCurrentCard, 1)[0],
+        beatOfCard: null,
+      };
+
       const newCardsForGameField = [
         ...(state.gameField || []),
-        ...newUserCards.splice(indexOfCurrentCard, 1),
+        newGameFieldCard,
       ];
 
       return RCompose<initialGameStateTypes>(
         R.assocPath(['users', userName, 'cards'], newUserCards),
         R.assocPath(['gameField'], newCardsForGameField),
+      )(state);
+    }
+    case BEAT_THE_MOVED_CARD: {
+      const { movedSuitOfCard, movedCardRank, beatCard } = action.payload;
+
+      if (!state.gameField) return state;
+
+      const newCardOnGameField: CardsOnGameField = state.gameField?.map(
+        card => {
+          if (
+            card.suitOfCard === movedSuitOfCard &&
+            card.rank === movedCardRank
+          ) {
+            return { ...card, beatOfCard: beatCard };
+          }
+          return card;
+        },
+      );
+
+      const nameOfProtectingUser = Object.keys(state.users).reduce(
+        (acc, userName) => {
+          if (!state.users[userName].hisTurn) {
+            acc = state.users[userName].name;
+          }
+          return acc;
+        },
+        null as string | null,
+      );
+
+      if (!nameOfProtectingUser) return state;
+
+      const protectingUserCards = state.users[nameOfProtectingUser].cards || [];
+
+      const indexOfDroppedCardFromUserDeck = protectingUserCards.findIndex(
+        card =>
+          card.suitOfCard === beatCard.suitOfCard &&
+          card.rank === beatCard.rank,
+      );
+
+      const newUserCardsWithoutDropped = [...protectingUserCards];
+      newUserCardsWithoutDropped.splice(indexOfDroppedCardFromUserDeck, 1);
+
+      return RCompose<initialGameStateTypes>(
+        R.assocPath(['gameField'], newCardOnGameField),
+        R.assocPath(
+          ['users', nameOfProtectingUser, 'cards'],
+          newUserCardsWithoutDropped,
+        ),
+      )(state);
+    }
+    case TAKE_CARDS: {
+      const { userName } = action.payload;
+
+      const cardOnGameField = state.gameField
+        ? state.gameField.reduce((acc, card) => {
+            const { rank, rankForComparison, suitOfCard, beatOfCard } = card;
+            acc.push({ suitOfCard, rank, rankForComparison });
+            if (beatOfCard) {
+              acc.push(beatOfCard);
+            }
+            return acc;
+          }, [] as DeckOfCard)
+        : [];
+      const newUserCards = [...(state.users[userName].cards || [])].concat(
+        cardOnGameField,
+      );
+      return RCompose<initialGameStateTypes>(
+        R.assocPath(['users', userName, 'cards'], newUserCards),
+        R.assocPath(['gameField'], null),
       )(state);
     }
     default:
@@ -97,15 +180,22 @@ export const getShuffledDeck: Selector<DeckOfCard | null> = createSelector(
   },
 );
 
-export const getWalkingPlayer: Selector<string> = createSelector(
+export const getMovingUser: Selector<string | null> = createSelector(
   getState,
   state => {
-    Object.keys(state.users).forEach(userName => {
+    return Object.keys(state.users).reduce((acc, userName) => {
       if (state.users[userName].hisTurn) {
-        return state.users[userName].name;
+        acc = state.users[userName].name;
       }
-    });
-    return '';
+      return acc;
+    }, null as null | string);
+  },
+);
+
+export const getTrump: Selector<SuitOfCard | null> = createSelector(
+  getState,
+  state => {
+    return state.trump;
   },
 );
 
@@ -117,7 +207,7 @@ export const getSecondUser: Selector<User> = createSelector(getState, state => {
   return state.users[Object.keys(state.users)[1]];
 });
 
-export const getGameField: Selector<DeckOfCard | null> = createSelector(
+export const getGameField: Selector<CardsOnGameField | null> = createSelector(
   getState,
   state => {
     return state.gameField;

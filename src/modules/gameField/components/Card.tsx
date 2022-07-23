@@ -8,6 +8,14 @@ import {
   SpadeIcon,
 } from '../../../components/icons/icons';
 import { Rank, SuitOfCard } from '../../../redux/gameSessionReducer/models';
+import {
+  cardHeight,
+  cardWidth,
+  movingUser,
+  protectingUser,
+} from '../models/models';
+import { useSelector } from 'react-redux';
+import { getMovingUser } from '../../../redux/gameSessionReducer/gameSessionReducer';
 
 const suitOfCards: {
   [key: string]: React.ReactElement;
@@ -35,8 +43,10 @@ export const Card = ({
   rankForComparison,
   userName = '',
 }: CardProps) => {
+  const currentMovingUser = useSelector(getMovingUser);
+
   const [{ isDragging }, drag] = useDrag(() => ({
-    type: 'Card',
+    type: currentMovingUser === userName ? movingUser : protectingUser,
     collect: monitor => ({
       isDragging: !!monitor.isDragging(),
     }),
@@ -55,8 +65,8 @@ export const Card = ({
 };
 
 const CardContainer = styled.div<any>`
-  width: 150px;
-  height: 220px;
+  width: ${cardWidth}px;
+  height: ${cardHeight}px;
 `;
 
 const CardInfoContainer = styled.div<any>`
