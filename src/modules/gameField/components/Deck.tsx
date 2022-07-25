@@ -4,6 +4,7 @@ import { Card } from './Card';
 import { useSelector } from 'react-redux';
 import { getShuffledDeck } from '../../../redux/gameSessionReducer/gameSessionReducer';
 import { InvertedCard } from './InvertedCard';
+import { cardHeight } from '../models/models';
 
 export const Deck = () => {
   const deck = useSelector(getShuffledDeck);
@@ -12,30 +13,33 @@ export const Deck = () => {
   return (
     <DeckContainer>
       {lastCard && (
-        <>
+        <Cards>
           <CardCounter>{deck?.length}</CardCounter>
-          <Container marginLeft={70}>
+          <CardContainer marginLeft={70} rotate={90}>
             <Card
               suitOfCard={lastCard.suitOfCard}
               rank={lastCard.rank}
               rankForComparison={lastCard.rankForComparison}
-              rotate={90}
               canDrag={false}
             />
-          </Container>
-          <CardsContainer>
-            <Container>
-              <InvertedCard />
-            </Container>
-          </CardsContainer>
-        </>
+          </CardContainer>
+          <CardContainer>
+            <InvertedCard />
+          </CardContainer>
+        </Cards>
       )}
     </DeckContainer>
   );
 };
 
 const DeckContainer = styled.div`
+  height: 100%;
   position: relative;
+`;
+
+const Cards = styled.div`
+  position: absolute;
+  top: calc(50% - ${cardHeight / 2}px);
 `;
 
 const CardCounter = styled.div`
@@ -45,11 +49,8 @@ const CardCounter = styled.div`
   color: #c7c7c7;
 `;
 
-const Container = styled.div<any>`
-  top: 20%;
+const CardContainer = styled.div<any>`
   position: absolute;
-  transform: rotate(90);
   ${({ marginLeft }) => marginLeft && `margin-left: ${marginLeft}px`};
+  ${({ rotate }) => rotate && `transform: rotate(${rotate}deg)`};
 `;
-
-const CardsContainer = styled.div``;

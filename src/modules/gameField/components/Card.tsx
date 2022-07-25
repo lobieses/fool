@@ -55,8 +55,8 @@ export const Card = ({
   }));
 
   return (
-    <CardContainer ref={drag}>
-      <CardInfoContainer rotate={rotate} isDragging={isDragging}>
+    <CardContainer ref={drag} rotate={rotate}>
+      <CardInfoContainer isDragging={isDragging}>
         <RankContainer>{rank}</RankContainer>
         <SuitOfCardContainer>{suitOfCards[suitOfCard]}</SuitOfCardContainer>
       </CardInfoContainer>
@@ -67,6 +67,7 @@ export const Card = ({
 const CardContainer = styled.div<any>`
   width: ${cardWidth}px;
   height: ${cardHeight}px;
+  ${({ rotate }) => rotate && `transform: rotate(${rotate}deg)`};
 `;
 
 const CardInfoContainer = styled.div<any>`
@@ -76,7 +77,7 @@ const CardInfoContainer = styled.div<any>`
   display: ${({ isDragging }) => (isDragging ? 'none' : 'flex')};
   justify-content: space-between;
   padding: 10px;
-  ${({ rotate }) => rotate && `transform: rotate(${rotate}deg)`};
+  box-sizing: border-box;
 `;
 
 const SuitOfCardContainer = styled.div``;

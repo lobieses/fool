@@ -116,6 +116,7 @@ const CardInfoContainer = styled.div<any>`
   display: flex;
   justify-content: space-between;
   padding: 10px;
+  box-sizing: border-box;
   ${({ rotate }) => rotate && `transform: rotate(${rotate}deg)`};
 `;
 

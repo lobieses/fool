@@ -62,9 +62,12 @@ const GameButtons = styled.div``;
 const CardsContainer = styled.div`
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 20px;
+  height: 100%;
 `;
 
 const MyCardsContainer = styled.div`
   position: relative;
+  height: 100%;
 `;

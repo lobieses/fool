@@ -13,6 +13,7 @@ const CardContainer = styled.div`
   border-radius: 10px;
   display: flex;
   justify-content: space-between;
+  box-sizing: border-box;
   padding: 10px;
   z-index: 999;
 `;
