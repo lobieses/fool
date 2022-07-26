@@ -29,6 +29,7 @@ export const Game = () => {
               user={secondUser}
               gameField={gameField}
               cardsRotate={180}
+              isMyCards={false}
             />
           </OpponentCardsContainer>
 
@@ -45,7 +46,11 @@ export const Game = () => {
           </LightsOutContainer>
 
           <MyCardsContainer>
-            <UserCards user={firstUser} gameField={gameField} />
+            <UserCards
+              user={firstUser}
+              gameField={gameField}
+              isMyCards={true}
+            />
           </MyCardsContainer>
         </Container>
       ) : (

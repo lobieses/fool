@@ -14,6 +14,7 @@ import {
 interface UserCardsProps {
   user: User;
   gameField: CardsOnGameField | null;
+  isMyCards: boolean;
   cardsRotate?: number;
 }
 
@@ -21,6 +22,7 @@ export const UserCards = ({
   user,
   gameField,
   cardsRotate = 0,
+  isMyCards,
 }: UserCardsProps) => {
   const dispatch = useDispatch();
 
@@ -33,6 +35,7 @@ export const UserCards = ({
               dispatch(takeCards({ userName: user.name || '' }));
               dispatch(distributeTheDeck());
             }}
+            isMyCards={isMyCards}
           >
             Take
           </TakeButton>
@@ -59,13 +62,13 @@ export const UserCards = ({
 
 const GameButtons = styled.div``;
 
-const TakeButton = styled.button`
+const TakeButton = styled.button<any>`
   position: absolute;
   border: none;
   width: 100px;
   height: 40px;
   left: 5px;
-  bottom: 0;
+  ${({ isMyCards }) => (isMyCards ? 'bottom: 5px' : 'top: 5px')};
   border-radius: 3px;
   background-color: rgba(0, 0, 0, 0.5);
   color: #c7c7c7;
