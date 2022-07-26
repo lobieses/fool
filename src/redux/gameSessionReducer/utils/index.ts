@@ -1,6 +1,7 @@
 import { RCompose } from '../../models';
 import { Card, DeckOfCard, SuitOfCard } from '../models';
 import * as R from 'ramda';
+import { User } from '../models';
 
 export const shuffleTheDeck = (
   cardsTemplate: DeckOfCard,
@@ -37,10 +38,10 @@ export const shuffleTheDeck = (
 };
 
 const selectAllTrumpsFromDeck = (
-  deck: DeckOfCard,
+  deck: DeckOfCard | null,
   trump: SuitOfCard,
 ): DeckOfCard | [] => {
-  return deck.filter(card => card.suitOfCard === trump);
+  return deck ? deck.filter(card => card.suitOfCard === trump) : [];
 };
 
 //send array of card with only one suit
@@ -52,12 +53,6 @@ const minimalRankOfCardBySuit = (deck: DeckOfCard) => {
     }
     return acc;
   }, 999);
-};
-
-type User = {
-  name: string;
-  cards: DeckOfCard;
-  hisTurn: boolean;
 };
 
 export const defineFirstUser = (
@@ -100,4 +95,38 @@ export const defineFirstUser = (
   return RCompose<{ [key: string]: User }>(
     R.assocPath([userNameWithMinimalTrump, 'hisTurn'], true),
   )(users);
+};
+
+export const distributeTheDeck = (
+  deck: DeckOfCard,
+  users: { [key: string]: User },
+): {
+  users: { [key: string]: User };
+  deck: DeckOfCard;
+} => {
+  const userWithDistributeCardsFromDeck = Object.keys(users).reduce(
+    (acc, userName) => {
+      const userCards = users[userName].cards;
+
+      if (userCards && userCards.length < 6) {
+        const numOfNeedCards = 6 - userCards.length;
+        const needCardsFromDeck = deck.splice(
+          deck.length - numOfNeedCards,
+          deck.length,
+        );
+        acc[userName] = {
+          ...users[userName],
+          cards: [...(users[userName].cards || []), ...needCardsFromDeck],
+        };
+        return acc;
+      }
+
+      acc[userName] = users[userName];
+
+      return acc;
+    },
+    {} as { [key: string]: User },
+  );
+
+  return { users: userWithDistributeCardsFromDeck, deck };
 };

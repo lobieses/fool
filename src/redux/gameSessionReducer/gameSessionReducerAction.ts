@@ -8,6 +8,7 @@ export const SET_NAMES = `${namespace}/SET_NAMES`;
 export const MAKE_CARD_MOVE = `${namespace}/MAKE_CARD_MOVE`;
 export const BEAT_THE_MOVED_CARD = `${namespace}/BEAT_THE_MOVED_CARD`;
 export const TAKE_CARDS = `${namespace}/TAKE_CARDS`;
+export const DISTRIBUTE_THE_DECK = `${namespace}/DISTRIBUTE_THE_DECK`;
 
 type startGameAC = () => Action;
 
@@ -48,4 +49,10 @@ type takeCardsAC = (payload: { userName: string }) => Action;
 export const takeCards: takeCardsAC = payload => ({
   type: TAKE_CARDS,
   payload,
+});
+
+type distributeTheDeckAC = () => Action;
+
+export const distributeTheDeck: distributeTheDeckAC = () => ({
+  type: DISTRIBUTE_THE_DECK,
 });

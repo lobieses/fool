@@ -4,6 +4,7 @@ import { Action, RCompose, Selector } from '../models';
 import { GlobalStateType } from '../store';
 import {
   BEAT_THE_MOVED_CARD,
+  DISTRIBUTE_THE_DECK,
   MAKE_CARD_MOVE,
   SET_NAMES,
   START_GAME,
@@ -17,7 +18,7 @@ import {
   SuitOfCard,
   CardsOnGameField,
 } from './models';
-import { defineFirstUser, shuffleTheDeck } from './utils';
+import { defineFirstUser, distributeTheDeck, shuffleTheDeck } from './utils';
 
 let initialGameState: initialGameStateTypes = {
   usersIsReady: false,
@@ -48,7 +49,6 @@ const gameSessionReducer = (
         R.assocPath([secondUserName, 'cards'], secondUserCard),
       )(state.users);
 
-      //@ts-expect-error
       const users = defineFirstUser(usersWithCards, trump);
 
       return RCompose<initialGameStateTypes>(
@@ -151,12 +151,25 @@ const gameSessionReducer = (
             return acc;
           }, [] as DeckOfCard)
         : [];
+
       const newUserCards = [...(state.users[userName].cards || [])].concat(
         cardOnGameField,
       );
+
       return RCompose<initialGameStateTypes>(
         R.assocPath(['users', userName, 'cards'], newUserCards),
         R.assocPath(['gameField'], null),
+      )(state);
+    }
+    case DISTRIBUTE_THE_DECK: {
+      const { users, deck } = distributeTheDeck(
+        [...(state.shuffledDeck || [])],
+        state.users,
+      );
+
+      return RCompose<initialGameStateTypes>(
+        R.assocPath(['users'], users),
+        R.assocPath(['shuffledDeck'], deck),
       )(state);
     }
     default:

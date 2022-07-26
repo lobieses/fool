@@ -6,7 +6,10 @@ import {
   getFirstUser,
   getGameField,
 } from '../../../redux/gameSessionReducer/gameSessionReducer';
-import { takeCards } from '../../../redux/gameSessionReducer/gameSessionReducerAction';
+import {
+  distributeTheDeck,
+  takeCards,
+} from '../../../redux/gameSessionReducer/gameSessionReducerAction';
 
 export const MyCards = () => {
   const dispatch = useDispatch();
@@ -20,6 +23,7 @@ export const MyCards = () => {
           <TakeButton
             onClick={() => {
               dispatch(takeCards({ userName: firstUser.name || '' }));
+              dispatch(distributeTheDeck());
             }}
           >
             Take
