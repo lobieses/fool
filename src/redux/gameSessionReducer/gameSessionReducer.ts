@@ -67,7 +67,7 @@ const gameSessionReducer = (
     }
 
     case MAKE_CARD_MOVE: {
-      const { suitOfCard, rank, rankForComparison, userName } = action.payload;
+      const { suitOfCard, rank, userName } = action.payload;
       const userCards = state.users[userName].cards;
       if (!userCards) return state;
 

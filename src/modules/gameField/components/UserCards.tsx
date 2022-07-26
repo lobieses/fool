@@ -1,28 +1,36 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { Card } from './Card';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  getFirstUser,
-  getGameField,
-} from '../../../redux/gameSessionReducer/gameSessionReducer';
+import { useDispatch } from 'react-redux';
 import {
   distributeTheDeck,
   takeCards,
 } from '../../../redux/gameSessionReducer/gameSessionReducerAction';
+import {
+  CardsOnGameField,
+  User,
+} from '../../../redux/gameSessionReducer/models';
 
-export const MyCards = () => {
+interface UserCardsProps {
+  user: User;
+  gameField: CardsOnGameField | null;
+  cardsRotate?: number;
+}
+
+export const UserCards = ({
+  user,
+  gameField,
+  cardsRotate = 0,
+}: UserCardsProps) => {
   const dispatch = useDispatch();
-  const firstUser = useSelector(getFirstUser);
-  const gameField = useSelector(getGameField);
 
   return (
     <MyCardsContainer>
-      {!firstUser.hisTurn && gameField && gameField.length && (
+      {!user.hisTurn && gameField && gameField.length && (
         <GameButtons>
           <TakeButton
             onClick={() => {
-              dispatch(takeCards({ userName: firstUser.name || '' }));
+              dispatch(takeCards({ userName: user.name || '' }));
               dispatch(distributeTheDeck());
             }}
           >
@@ -31,15 +39,16 @@ export const MyCards = () => {
         </GameButtons>
       )}
       <CardsContainer>
-        {firstUser.cards &&
-          firstUser.cards.map(card => {
+        {user.cards &&
+          user.cards.map(card => {
             return (
               <Card
                 suitOfCard={card.suitOfCard}
                 rank={card.rank}
                 rankForComparison={card.rankForComparison}
-                userName={firstUser.name || ''}
+                userName={user.name || ''}
                 key={card.suitOfCard + card.rank}
+                rotate={cardsRotate}
               />
             );
           })}
@@ -47,6 +56,8 @@ export const MyCards = () => {
     </MyCardsContainer>
   );
 };
+
+const GameButtons = styled.div``;
 
 const TakeButton = styled.button`
   position: absolute;
@@ -60,8 +71,6 @@ const TakeButton = styled.button`
   color: #c7c7c7;
   cursor: pointer;
 `;
-
-const GameButtons = styled.div``;
 
 const CardsContainer = styled.div`
   display: flex;

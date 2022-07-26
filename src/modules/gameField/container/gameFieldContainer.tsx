@@ -1,24 +1,35 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
-import { usersIsReady } from '../../../redux/gameSessionReducer/gameSessionReducer';
+import {
+  getFirstUser,
+  getGameField,
+  getSecondUser,
+  usersIsReady,
+} from '../../../redux/gameSessionReducer/gameSessionReducer';
 import { startGame } from '../../../redux/gameSessionReducer/gameSessionReducerAction';
 import { GameField } from '../components/GameField';
-import { OpponentCards } from '../components/OpponentsCards';
 import { Deck } from '../components/Deck';
 import { LightsOut } from '../components/LightsOut';
-import { MyCards } from '../components/MyCards';
+import { UserCards } from '../components/UserCards';
 
 export const Game = () => {
   const dispatch = useDispatch();
   const usersIsReadyForGame = useSelector(usersIsReady);
+  const firstUser = useSelector(getFirstUser);
+  const secondUser = useSelector(getSecondUser);
+  const gameField = useSelector(getGameField);
 
   return (
     <>
       {usersIsReadyForGame ? (
         <Container>
           <OpponentCardsContainer>
-            <OpponentCards />
+            <UserCards
+              user={secondUser}
+              gameField={gameField}
+              cardsRotate={180}
+            />
           </OpponentCardsContainer>
 
           <DeckContainer>
@@ -34,7 +45,7 @@ export const Game = () => {
           </LightsOutContainer>
 
           <MyCardsContainer>
-            <MyCards />
+            <UserCards user={firstUser} gameField={gameField} />
           </MyCardsContainer>
         </Container>
       ) : (
